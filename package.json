@@ -15,6 +15,7 @@
     "bootstrap": "^4.4.1",
     "cdgraphics": "^2.0.1",
     "dexie": "^2.0.4",
+    "electron": "^8.2.3",
     "node-sass": "^4.13.1",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.0",
@@ -25,7 +26,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "electron-dev": "ELECTRON_START_URL=http://localhost:8888 electron electron/main.js"
   },
   "eslintConfig": {
     "extends": "react-app"
