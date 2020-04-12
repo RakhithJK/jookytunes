@@ -1,32 +1,33 @@
 import React, { useState } from "react";
-import Playlist from '../lib/Playlist';
+import Playlist from "../lib/Playlist";
 
 const PlayerContext = React.createContext(null);
+
+const PLAYLIST = new Playlist({});
+export const addTrack = (t) => PLAYLIST.addTrack(t);
+export const play = () => PLAYLIST.play();
+export const stop = () => PLAYLIST.stop();
+export const advance = () => PLAYLIST.advance();
 
 export const PlayerContextProvider = function ({ children }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(null);
   const [tracks, setTracks] = useState([]);
 
-  const [playlist] = useState(new Playlist({
-    onPlayPause: (isPlaying) => {
-      setIsPlaying(isPlaying);
-      setCurrentTrack(playlist.getCurrentTrack());
-      setTracks(playlist.tracks);
-    },
-    onCurrentTrackChanged: (newTrack) => {
-      setCurrentTrack(newTrack);
-      setTracks(playlist.tracks);
-    },
-    onTracksChanged: (newTracks) => {
-      setTracks(newTracks);
-    }
-  }));
+  PLAYLIST.onPlayPause = (isPlaying) => {
+    setIsPlaying(isPlaying);
+    setCurrentTrack(PLAYLIST.getCurrentTrack());
+    setTracks(PLAYLIST.tracks);
+  };
 
-  const addTrack = (t) => playlist.addTrack(t);
-  const play = () => playlist.play();
-  const stop = () => playlist.stop();
-  const advance = () => playlist.advance();
+  PLAYLIST.onCurrentTrackChanged = (newTrack) => {
+    setCurrentTrack(newTrack);
+    setTracks(PLAYLIST.tracks);
+  };
+
+  PLAYLIST.onTracksChanged = (newTracks) => {
+    setTracks(newTracks);
+  };
 
   return (
     <PlayerContext.Provider

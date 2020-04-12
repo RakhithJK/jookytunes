@@ -1,13 +1,13 @@
 import React, { useRef, useEffect, useState, useContext } from "react";
 import CDGPlayer from "cdgraphics";
-import PlayerContext from "./PlayerContext";
+import PlayerContext, { advance } from "./PlayerContext";
 
 function Player() {
   const canvasElement = useRef(null);
   const [cdgPlayer, setCdgPlayer] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [audioSource, setAudioSource] = useState(null)
-  const { currentTrack: track, advance } = useContext(PlayerContext);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [audioSource, setAudioSource] = useState(null);
+  const { currentTrack: track } = useContext(PlayerContext);
 
   // Create an audiocontext once we load.
   useEffect(() => {
@@ -15,20 +15,20 @@ function Player() {
       if (!track) {
         return;
       }
-      console.log('Creating audio player...');
+      console.log("Creating audio player...");
       const ctx = new AudioContext();
       ctx.decodeAudioData(track.audioFile.buffer, (audioBuffer) => {
         const source = ctx.createBufferSource();
         source.buffer = audioBuffer;
         source.connect(ctx.destination);
         setAudioSource(source);
-        source.onended = function() {
+        source.onended = function () {
           advance();
-        }
+        };
       });
     }
     function cleanup() {
-      console.log('TODO: Clean up audio context');
+      console.log("TODO: Clean up audio context");
     }
     onSetup();
     return cleanup;
@@ -41,7 +41,7 @@ function Player() {
       if (!canvas) {
         return;
       }
-      console.log('Creating CDG player...');
+      console.log("Creating CDG player...");
       setCdgPlayer(new CDGPlayer(canvas, { forceTransparent: false }));
     }
     onSetup();
@@ -53,7 +53,7 @@ function Player() {
       if (!track || !cdgPlayer) {
         return;
       }
-      console.log('Loading CDG data...');
+      console.log("Loading CDG data...");
       cdgPlayer.load(track.cdgData);
       setIsPlaying(true);
     }
@@ -67,11 +67,11 @@ function Player() {
         return;
       }
       if (isPlaying) {
-        console.log('Playing ...');
+        console.log("Playing ...");
         audioSource.start();
         cdgPlayer.play();
       } else {
-        console.log('Stopping ...');
+        console.log("Stopping ...");
         // TODO
       }
     }

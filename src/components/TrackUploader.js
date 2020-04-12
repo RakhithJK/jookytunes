@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import Track from "../lib/Track";
-import PlayerContext from "./PlayerContext";
+import { addTrack } from "./PlayerContext";
 
 function readFileAsync(file) {
   return new Promise((resolve, reject) => {
@@ -17,7 +17,6 @@ function TrackUploader() {
   const [trackName, setTrackName] = useState('');
   const [audioData, setAudioData] = useState(null);
   const [cdgData, setCdgData] = useState(null);
-  const { addTrack } = useContext(PlayerContext);
 
   useEffect(() => {
     function onChange() {
