@@ -1,0 +1,25 @@
+.playlist {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    .tracks {
+        flex-grow: 1;
+        h5 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+        .track {
+            border: 1px solid #aaa;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            margin-bottom: 1rem;
+        }
+        .active {
+            background-color: darkgoldenrod;
+        }
+    }
+    .uploader {
+
+    }
+}

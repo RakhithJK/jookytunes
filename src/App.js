@@ -1,23 +1,25 @@
-import React, { useState } from "react";
-import "./App.css";
-import Player from "./lib/Player";
-import TrackUploader from "./lib/TrackUploader";
+import React from "react";
+import "./App.scss";
+import Player from "./components/Player";
+import { PlayerContextProvider } from "./components/PlayerContext";
+import Playlist from "./components/Playlist";
 
 function App() {
-  const [currentTrack, setCurrentTrack] = useState(null);
-
   return (
-    <>
-      <div className="App">
-        <header className="App-header">
-          <h1>Jooktunes!</h1>
-        </header>
-        <h3>Select a track to play.</h3>
-        <TrackUploader onTrackReady={setCurrentTrack} />
-        <Player track={currentTrack} />
+    <PlayerContextProvider>
+      <div className="container">
+        <div className="left-bar">
+          <Playlist />
+        </div>
+        <div className="main-window">
+          <div className="header"></div>
+          <div className="player">
+            <Player />
+          </div>
+          <div className="footer"></div>
+        </div>
       </div>
-      <div></div>
-    </>
+    </PlayerContextProvider>
   );
 }
 

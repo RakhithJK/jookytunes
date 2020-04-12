@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import Track from "./Track";
+import React, { useState, useEffect, useContext } from "react";
+import Track from "../lib/Track";
+import PlayerContext from "./PlayerContext";
 
 function readFileAsync(file) {
   return new Promise((resolve, reject) => {
@@ -12,18 +13,23 @@ function readFileAsync(file) {
   });
 }
 
-function TrackUploader({ onTrackReady }) {
+function TrackUploader() {
+  const [trackName, setTrackName] = useState('');
   const [audioData, setAudioData] = useState(null);
   const [cdgData, setCdgData] = useState(null);
+  const { addTrack } = useContext(PlayerContext);
 
   useEffect(() => {
     function onChange() {
       if (audioData && cdgData) {
-        onTrackReady(new Track(audioData, cdgData));
+        addTrack(new Track(trackName, audioData, cdgData));
+        setTrackName('');
+        setAudioData(null);
+        setCdgData(null);
       }
     }
     onChange();
-  }, [audioData, cdgData, onTrackReady]);
+  }, [audioData, cdgData, trackName]);
 
   const onFilesUploaded = async (e) => {
     const { files } = e.target;
@@ -35,6 +41,9 @@ function TrackUploader({ onTrackReady }) {
         setCdgData(decoded);
       } else if (ext === "mp3") {
         setAudioData(decoded);
+      }
+      if (!trackName) {
+        setTrackName(file.name);
       }
     }
   };

@@ -1,0 +1,30 @@
+.container {
+  background-color: #282c34;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  .left-bar {
+    width: 10em;
+    height: 100%;
+    background-color: #282c34;
+    color: #eee;
+    padding: 1em;
+  }
+  .main-window {
+    background-color: #000;
+    flex-grow: 1;
+    height: 100%;
+    .header {
+    }
+    .player {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+    .footer {
+    }
+  }
+}

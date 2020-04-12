@@ -1,11 +1,13 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
 import CDGPlayer from "cdgraphics";
+import PlayerContext from "./PlayerContext";
 
-function Player({ track, autoPlay }) {
+function Player() {
   const canvasElement = useRef(null);
   const [cdgPlayer, setCdgPlayer] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false)
   const [audioSource, setAudioSource] = useState(null)
+  const { currentTrack: track, advance } = useContext(PlayerContext);
 
   // Create an audiocontext once we load.
   useEffect(() => {
@@ -16,12 +18,13 @@ function Player({ track, autoPlay }) {
       console.log('Creating audio player...');
       const ctx = new AudioContext();
       ctx.decodeAudioData(track.audioFile.buffer, (audioBuffer) => {
-        console.log('Connecting audio..')
         const source = ctx.createBufferSource();
         source.buffer = audioBuffer;
         source.connect(ctx.destination);
-        console.log('Audio prepared!');
         setAudioSource(source);
+        source.onended = function() {
+          advance();
+        }
       });
     }
     function cleanup() {
@@ -39,7 +42,7 @@ function Player({ track, autoPlay }) {
         return;
       }
       console.log('Creating CDG player...');
-      setCdgPlayer(new CDGPlayer(canvas, { forceTransparent: true }));
+      setCdgPlayer(new CDGPlayer(canvas, { forceTransparent: false }));
     }
     onSetup();
   }, [canvasElement]);
