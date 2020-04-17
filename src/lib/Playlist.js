@@ -37,11 +37,11 @@ export default class Playlist {
     return this.tracks.length === 0;
   }
 
-  addTrack(track) {
+  addTrack(track, options = { autoPlay: true }) {
     const wasEmpty = this.isEmpty();
     this.tracks.push(track);
     this.onTracksChanged([...this.tracks]);
-    if (wasEmpty) {
+    if (wasEmpty && options.autoPlay) {
       this.play();
     }
   }
