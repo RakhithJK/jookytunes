@@ -1,13 +1,14 @@
 import React from "react";
-import "./App.scss";
 import Player from "./components/Player";
 import { PlayerContextProvider } from "./components/PlayerContext";
 import Playlist from "./components/Playlist";
 
+import "./App.scss";
+
 function App() {
   return (
     <PlayerContextProvider>
-      <div className="container">
+      <div className="main-container">
         <div className="left-bar">
           <Playlist />
         </div>
