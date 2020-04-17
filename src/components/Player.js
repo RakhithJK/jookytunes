@@ -1,9 +1,18 @@
-import React, { useRef, useEffect, useState, useContext } from "react";
+import React, {  useEffect, useState, useContext } from "react";
 import CDGPlayer from "cdgraphics";
 import PlayerContext, { advance } from "./PlayerContext";
 
+import "./Player.scss";
+
+class Canvas extends React.PureComponent {
+  render() {
+    const { onCanvasReady, ...props } = this.props;
+    return <canvas ref={(node) => node && onCanvasReady(node)} {...props} />;
+  }
+}
+
 function Player() {
-  const canvasElement = useRef(null);
+  const [currentCanvas, setCurrentCanvas] = useState(null);
   const [cdgPlayer, setCdgPlayer] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioSource, setAudioSource] = useState(null);
@@ -17,9 +26,9 @@ function Player() {
       }
       console.log("Creating audio player...");
       const ctx = new AudioContext();
-      ctx.decodeAudioData(track.audioFile.buffer, (audioBuffer) => {
+      ctx.decodeAudioData(track.audioData.buffer, (audioData) => {
         const source = ctx.createBufferSource();
-        source.buffer = audioBuffer;
+        source.buffer = audioData;
         source.connect(ctx.destination);
         setAudioSource(source);
         source.onended = function () {
@@ -37,15 +46,14 @@ function Player() {
   // Create a CDGPlayer once we have a canvas.
   useEffect(() => {
     function onSetup() {
-      const canvas = canvasElement && canvasElement.current;
-      if (!canvas) {
+      if (!currentCanvas) {
         return;
       }
       console.log("Creating CDG player...");
-      setCdgPlayer(new CDGPlayer(canvas, { forceTransparent: false }));
+      setCdgPlayer(new CDGPlayer(currentCanvas, { forceTransparent: false }));
     }
     onSetup();
-  }, [canvasElement]);
+  }, [currentCanvas]);
 
   // Bootstrap the CDGPlayer with data once we have it.
   useEffect(() => {
@@ -80,7 +88,15 @@ function Player() {
 
   return (
     <div className="cdg-player">
-      <canvas width={600} height={432} ref={canvasElement} />
+      <Canvas
+        width={600}
+        height={432}
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+        onCanvasReady={setCurrentCanvas}
+      />
     </div>
   );
 }

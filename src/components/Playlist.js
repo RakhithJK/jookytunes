@@ -8,10 +8,10 @@ function Playlist() {
   const { tracks, currentTrack } = useContext(PlayerContext);
 
   const playlistItems = tracks.map((track) => {
-    const isActive = track.id === currentTrack.id;
+    const isActive = currentTrack && track.id === currentTrack.id;
     return (
-      <div key={track.id} className={`track ${isActive ? 'active' : ''}`}>
-        {track.name}
+      <div key={track.digest} className={`track ${isActive ? 'active' : ''}`}>
+        {track.title}
       </div>
     );
   });

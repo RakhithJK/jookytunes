@@ -19,9 +19,9 @@ function TrackUploader() {
   const [cdgData, setCdgData] = useState(null);
 
   useEffect(() => {
-    function onChange() {
-      if (audioData && cdgData) {
-        addTrack(new Track(trackName, audioData, cdgData));
+    async function onChange() {
+      if (audioData && cdgData && trackName) {
+        addTrack(await Track.fromData(trackName, trackName, audioData.buffer, cdgData));
         setTrackName('');
         setAudioData(null);
         setCdgData(null);
@@ -32,6 +32,7 @@ function TrackUploader() {
 
   const onFilesUploaded = async (e) => {
     const { files } = e.target;
+    let haveTrackName = !!trackName;
     for (var i = 0; i < files.length; i++) {
       const file = files[i];
       const ext = file.name.split(".").pop().toLowerCase();
@@ -41,8 +42,9 @@ function TrackUploader() {
       } else if (ext === "mp3") {
         setAudioData(decoded);
       }
-      if (!trackName) {
+      if (!haveTrackName) {
         setTrackName(file.name);
+        haveTrackName = true;
       }
     }
   };

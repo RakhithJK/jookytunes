@@ -1,10 +1,16 @@
 import React, { useState } from "react";
 import Playlist from "../lib/Playlist";
+import Storage from "../lib/Storage";
 
 const PlayerContext = React.createContext(null);
 
+const STORAGE = new Storage();
 const PLAYLIST = new Playlist({});
-export const addTrack = (t) => PLAYLIST.addTrack(t);
+
+export const addTrack = async (t) => {
+  await STORAGE.addTrackToLibrary(t);
+  PLAYLIST.addTrack(t)
+};
 export const play = () => PLAYLIST.play();
 export const stop = () => PLAYLIST.stop();
 export const advance = () => PLAYLIST.advance();
