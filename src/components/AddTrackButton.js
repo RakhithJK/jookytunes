@@ -5,6 +5,7 @@ import Fab from "@material-ui/core/Fab";
 import Modal from "@material-ui/core/Modal";
 import Grid from "@material-ui/core/Grid";
 import AddIcon from "@material-ui/icons/Add";
+import Dialog from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   extendedIcon: {
@@ -33,6 +34,7 @@ const AddTrackButton = ({ onTrackAdded, buttonClass }) => {
         onClose={() => setShowModal(false)}
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
+        onBackdropClick={() => setShowModal(false)}
       >
         <div>
           <Grid

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Track from "../lib/Track";
 import { addTrack } from "./PlayerContext";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 function readFileAsync(file) {
   return new Promise((resolve, reject) => {
@@ -16,7 +17,7 @@ function readFileAsync(file) {
 const FILE_NAME_REGEXES = [
   /^([A-Za-z0-9-]+) - (?<artist>.+) - (?<title>.+)\.(cdg|mp3)$/,
   /^(?<artist>.+) - (?<title>.+)\.(cdg|mp3)$/,
-]
+];
 
 function guessTitleAndArtist(filename) {
   for (const re of FILE_NAME_REGEXES) {
@@ -28,17 +29,27 @@ function guessTitleAndArtist(filename) {
   return null;
 }
 
-function TrackUploader({ onTrackAdded = () => {}}) {
-  const [trackName, setTrackName] = useState('');
+function TrackUploader({ onTrackAdded = () => {} }) {
+  const [trackName, setTrackName] = useState("");
   const [audioData, setAudioData] = useState(null);
   const [cdgData, setCdgData] = useState(null);
+  const [inProgress, setInProgress] = useState(null);
 
   useEffect(() => {
     async function onChange() {
       if (audioData && cdgData && trackName) {
         const { title, artist } = guessTitleAndArtist(trackName) || {};
-        addTrack(await Track.fromData(title || trackName, artist || 'Unknown', audioData.buffer, cdgData));
-        setTrackName('');
+        setInProgress(true);
+        await addTrack(
+          await Track.fromData(
+            title || trackName,
+            artist || "Unknown",
+            audioData.buffer,
+            cdgData
+          )
+        );
+        setInProgress(false);
+        setTrackName("");
         setAudioData(null);
         setCdgData(null);
         onTrackAdded();
@@ -69,6 +80,15 @@ function TrackUploader({ onTrackAdded = () => {}}) {
   const uploadInput = (
     <input type="file" accept=".mp3,.cdg" onChange={onFilesUploaded} multiple />
   );
+
+  if (inProgress) {
+    return (
+      <div>
+        <h5>Uploading...</h5>
+        <LinearProgress />
+      </div>
+    );
+  }
 
   if (audioData && cdgData) {
     return <div>All set!</div>;

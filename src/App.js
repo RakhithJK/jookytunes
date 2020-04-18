@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Player from "./components/Player";
 import { PlayerContextProvider } from "./components/PlayerContext";
 import QueueStatus from "./components/QueueStatus";
