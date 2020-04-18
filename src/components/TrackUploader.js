@@ -13,7 +13,22 @@ function readFileAsync(file) {
   });
 }
 
-function TrackUploader() {
+const FILE_NAME_REGEXES = [
+  /^([A-Za-z0-9-]+) - (?<artist>.+) - (?<title>.+)\.(cdg|mp3)$/,
+  /^(?<artist>.+) - (?<title>.+)\.(cdg|mp3)$/,
+]
+
+function guessTitleAndArtist(filename) {
+  for (const re of FILE_NAME_REGEXES) {
+    const m = re.exec(filename);
+    if (m) {
+      return { title: m.groups.title, artist: m.groups.artist };
+    }
+  }
+  return null;
+}
+
+function TrackUploader({ onTrackAdded = () => {}}) {
   const [trackName, setTrackName] = useState('');
   const [audioData, setAudioData] = useState(null);
   const [cdgData, setCdgData] = useState(null);
@@ -21,10 +36,12 @@ function TrackUploader() {
   useEffect(() => {
     async function onChange() {
       if (audioData && cdgData && trackName) {
-        addTrack(await Track.fromData(trackName, trackName, audioData.buffer, cdgData));
+        const { title, artist } = guessTitleAndArtist(trackName) || {};
+        addTrack(await Track.fromData(title || trackName, artist || 'Unknown', audioData.buffer, cdgData));
         setTrackName('');
         setAudioData(null);
         setCdgData(null);
+        onTrackAdded();
       }
     }
     onChange();
