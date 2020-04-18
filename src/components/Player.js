@@ -1,6 +1,7 @@
 import React, {  useEffect, useState, useContext } from "react";
 import CDGPlayer from "cdgraphics";
 import PlayerContext, { advance } from "./PlayerContext";
+import SplashScreen from './SplashScreen';
 
 import "./Player.scss";
 
@@ -94,9 +95,11 @@ function Player() {
         style={{
           width: "100%",
           height: "100%",
+          display: isPlaying ? 'block' : 'none',
         }}
         onCanvasReady={setCurrentCanvas}
       />
+      {!isPlaying && <SplashScreen />}
     </div>
   );
 }

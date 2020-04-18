@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import Player from "./components/Player";
 import { PlayerContextProvider } from "./components/PlayerContext";
-import Playlist from "./components/Playlist";
+import QueueStatus from "./components/QueueStatus";
+import AddTrackButton from "./components/AddTrackButton";
 
 import "./App.scss";
 
@@ -9,16 +10,11 @@ function App() {
   return (
     <PlayerContextProvider>
       <div className="main-container">
-        <div className="left-bar">
-          <Playlist />
-        </div>
         <div className="main-window">
-          <div className="header"></div>
-          <div className="player">
-            <Player />
-          </div>
-          <div className="footer"></div>
+          <Player className="player" />
         </div>
+        <QueueStatus className="queue" />
+        <AddTrackButton buttonClass="action-button" />
       </div>
     </PlayerContextProvider>
   );

@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.9.11",
+    "@material-ui/icons": "^4.9.1",
+    "@openfonts/concert-one_latin": "^1.44.1",
+    "@openfonts/overlock_latin": "^1.44.1",
+    "@openfonts/rammetto-one_latin": "^1.44.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",

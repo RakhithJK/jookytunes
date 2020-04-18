@@ -1,0 +1,19 @@
+@import "~@openfonts/concert-one_latin/index.css";
+
+.container {
+  height: 10vh;
+  background-color: black;
+  z-index: 1;
+
+  .queue {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: rgba(0, 0, 0, 0.9);
+    .queued-track {
+        font-family: 'Concert One';
+        width: 20%;
+        font-size: 0.8em;
+        padding: 0.5rem;
+    }
+  }
+}
