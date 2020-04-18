@@ -1,46 +1,32 @@
 import React, { useState } from "react";
-import Playlist from "../lib/Playlist";
-import Storage from "../lib/Storage";
+import Controller from "../lib/Controller";
 
 const PlayerContext = React.createContext(null);
 
-const STORAGE = new Storage();
-const PLAYLIST = new Playlist({});
-
-export const addTrack = async (t) => {
-  await STORAGE.addTrackToLibrary(t);
-  PLAYLIST.addTrack(t)
-};
-export const play = () => PLAYLIST.play();
-export const stop = () => PLAYLIST.stop();
-export const advance = () => PLAYLIST.advance();
+const CONTROLLER = new Controller();
+export const addTrack = (t) => CONTROLLER.addTrack(t);
+export const play = () => CONTROLLER.play();
+export const stop = () => CONTROLLER.stop();
+export const advance = () => CONTROLLER.advance();
 
 export const PlayerContextProvider = function ({ children }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(null);
-  const [tracks, setTracks] = useState([]);
+  const [queue, setQueue] = useState([]);
 
-  PLAYLIST.onPlayPause = (isPlaying) => {
-    setIsPlaying(isPlaying);
-    setCurrentTrack(PLAYLIST.getCurrentTrack());
-    setTracks(PLAYLIST.tracks);
-  };
-
-  PLAYLIST.onCurrentTrackChanged = (newTrack) => {
-    setCurrentTrack(newTrack);
-    setTracks(PLAYLIST.tracks);
-  };
-
-  PLAYLIST.onTracksChanged = (newTracks) => {
-    setTracks(newTracks);
-  };
+  CONTROLLER.onStateChange = (controllerState) => {
+    console.log('got state', controllerState);
+    setIsPlaying(controllerState.isPlaying);
+    setCurrentTrack(controllerState.currentTrack);
+    setQueue([...controllerState.queue]);
+  }
 
   return (
     <PlayerContext.Provider
       value={{
         isPlaying,
         currentTrack,
-        tracks,
+        queue,
         addTrack,
         play,
         stop,

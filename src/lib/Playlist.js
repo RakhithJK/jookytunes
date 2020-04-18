@@ -1,11 +1,17 @@
 export default class Playlist {
-  constructor({ onTracksChanged = () => {}, onCurrentTrackChanged = () => {}, onPlayPause = () => {} }) {
+  constructor({ onStatusChanged = () => {} }) {
     this.tracks = [];
     this.currentIndex = null;
     this.isPlaying = false;
-    this.onTracksChanged = onTracksChanged;
-    this.onCurrentTrackChanged = onCurrentTrackChanged;
-    this.onPlayPause = onPlayPause;
+    this.onStatusChanged = onStatusChanged;
+  }
+
+  publishStatusChange() {
+    this.onStatusChanged({
+      currentTrack: this.getCurrentTrack(),
+      queue: this.tracks.slice(this.currentIndex),
+      isPlaying: this.isPlaying,
+    });
   }
 
   play() {
@@ -16,20 +22,19 @@ export default class Playlist {
       this.currentIndex = 0;
     }
     this.isPlaying = true;
-    this.onPlayPause(this.isPlaying);
-    this.onCurrentTrackChanged(this.getCurrentTrack());
+    this.publishStatusChange();
   }
 
   pause() {
     if (!this.isPlaying) {
       return;
     }
-    this.onPlayPause(this.isPlaying);
+    this.publishStatusChange();
   }
 
   stop() {
     this.pause();
-    this.onCurrentTrackChanged(this.getCurrentTrack());
+    this.publishStatusChange();
     this.currentIndex = null;
   }
 
@@ -40,7 +45,7 @@ export default class Playlist {
   addTrack(track, options = { autoPlay: true }) {
     const wasEmpty = this.isEmpty();
     this.tracks.push(track);
-    this.onTracksChanged([...this.tracks]);
+    this.publishStatusChange();
     if (wasEmpty && options.autoPlay) {
       this.play();
     }
@@ -53,9 +58,9 @@ export default class Playlist {
     if (this.currentIndex === null) {
       this.currentIndex = 0;
     } else {
-      this.currentIndex = (this.currentIndex + 1 ) % this.tracks.length;
+      this.currentIndex = (this.currentIndex + 1) % this.tracks.length;
     }
-    this.onCurrentTrackChanged(this.getCurrentTrack());
+    this.publishStatusChange();
   }
 
   // Like `next()`, but stops & does not loop around if at end of playlist.
@@ -79,7 +84,7 @@ export default class Playlist {
     } else {
       this.currentIndex = (this.currentIndex - 1) % this.tracks.length;
     }
-    this.onCurrentTrackChanged(this.getCurrentTrack());
+    this.publishStatusChange();
   }
 
   getCurrentTrack() {

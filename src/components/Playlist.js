@@ -5,10 +5,10 @@ import PlayerContext from "./PlayerContext";
 import './Playlist.scss';
 
 function Playlist() {
-  const { tracks, currentTrack } = useContext(PlayerContext);
+  const { queue, currentTrack } = useContext(PlayerContext);
 
-  const playlistItems = tracks.map((track) => {
-    const isActive = currentTrack && track.id === currentTrack.id;
+  const playlistItems = queue.map((track) => {
+    const isActive = currentTrack && track.digest === currentTrack.digest;
     return (
       <div key={track.digest} className={`track ${isActive ? 'active' : ''}`}>
         {track.title}
