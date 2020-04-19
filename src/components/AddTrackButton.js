@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import TrackUploader from "./TrackUploader";
 import LibraryBrowser from "./LibraryBrowser";
 import { makeStyles } from "@material-ui/core/styles";
 import Fab from "@material-ui/core/Fab";
 import { Dialog, DialogContent } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-import { addTrack } from "./PlayerContext";
+import PlayerContext from "./PlayerContext";
 
 import "./AddTrackButton.scss";
 
@@ -16,11 +16,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AddTrackButton = ({ onTrackAdded = () => {}, buttonClass }) => {
+  const { controller } = useContext(PlayerContext);
   const styles = useStyles();
   const [showModal, setShowModal] = useState(false);
   const onTrackSelected = (t) => {
     setShowModal(false);
-    addTrack(t);
+    controller.addTrack(t);
     onTrackAdded(t);
   };
 

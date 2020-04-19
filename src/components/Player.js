@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import CDGPlayer from "cdgraphics";
-import PlayerContext, { advance } from "./PlayerContext";
+import PlayerContext from "./PlayerContext";
 import SplashScreen from "./SplashScreen";
 import { useDebounce } from "use-debounce";
 
@@ -27,7 +27,7 @@ function Player() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioSource, setAudioSource] = useState(null);
   const [backgroundStyle, setBackgroundStyle] = useState("#000");
-  const { currentTrack: track } = useContext(PlayerContext);
+  const { controller, currentTrack: track } = useContext(PlayerContext);
 
   useEffect(() => {
     function handleResize() {
@@ -54,7 +54,7 @@ function Player() {
         source.connect(ctx.destination);
         setAudioSource(source);
         source.onended = function () {
-          advance();
+          controller.advance();
         };
       });
     }
@@ -63,7 +63,7 @@ function Player() {
     }
     onSetup();
     return cleanup;
-  }, [track]);
+  }, [controller, track]);
 
   const onBackgroundChange = ([r, g, b]) => {
     const newBackgroundStyle = `rgba(${r}, ${g}, ${b}, 1.0)`;
