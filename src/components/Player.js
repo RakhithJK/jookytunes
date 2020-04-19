@@ -1,9 +1,14 @@
-import React, {  useEffect, useState, useContext } from "react";
+import React, {  useEffect, useState, useContext, useRef } from "react";
 import CDGPlayer from "cdgraphics";
 import PlayerContext, { advance } from "./PlayerContext";
 import SplashScreen from './SplashScreen';
+import { useDebounce } from 'use-debounce';
 
 import "./Player.scss";
+
+const CANVAS_WIDTH = 600;
+const CANVAS_HEIGHT = 432;
+const CANVAS_ASPECT_RATIO = CANVAS_WIDTH / CANVAS_HEIGHT;
 
 class Canvas extends React.PureComponent {
   render() {
@@ -13,11 +18,24 @@ class Canvas extends React.PureComponent {
 }
 
 function Player() {
+  const [rawWindowAspectRatio, setWindowAspectRatio] = useState(window.innerWidth / window.innerHeight);
+  const [windowAspectRatio] = useDebounce(rawWindowAspectRatio, 200);
   const [currentCanvas, setCurrentCanvas] = useState(null);
   const [cdgPlayer, setCdgPlayer] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioSource, setAudioSource] = useState(null);
   const { currentTrack: track } = useContext(PlayerContext);
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowAspectRatio(window.innerWidth / window.innerHeight);
+    };
+    function cleanupListener() {
+      window.removeEventListener('resize', handleResize)
+    }
+    window.addEventListener('resize', handleResize);
+    return cleanupListener;
+  }, []);
 
   // Create an audiocontext once we load.
   useEffect(() => {
@@ -87,14 +105,24 @@ function Player() {
     onSetup();
   }, [cdgPlayer, audioSource, isPlaying]);
 
+  const effectiveAspectRatio = windowAspectRatio / CANVAS_ASPECT_RATIO;
+  let width, height;
+  if (effectiveAspectRatio >= 1.0) {
+    height = '100%';
+    width = `${100 / effectiveAspectRatio}%`;
+  } else {
+    width = '100%';
+    height = `${100 * effectiveAspectRatio}%`;
+  }
+
   return (
     <div className="cdg-player">
       <Canvas
         width={600}
         height={432}
         style={{
-          width: "100%",
-          height: "100%",
+          width,
+          height,
           display: isPlaying ? 'block' : 'none',
         }}
         onCanvasReady={setCurrentCanvas}
