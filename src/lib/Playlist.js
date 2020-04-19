@@ -9,7 +9,7 @@ export default class Playlist {
   publishStatusChange() {
     this.onStatusChanged({
       currentTrack: this.getCurrentTrack(),
-      queue: this.tracks.slice(this.currentIndex),
+      queue: this.tracks.slice(this.currentIndex + 1),
       isPlaying: this.isPlaying,
     });
   }
@@ -34,8 +34,8 @@ export default class Playlist {
 
   stop() {
     this.pause();
-    this.publishStatusChange();
     this.currentIndex = null;
+    this.publishStatusChange();
   }
 
   isEmpty() {

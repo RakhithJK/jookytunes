@@ -56,7 +56,7 @@ function TrackUploader({ onTrackAdded = () => {} }) {
       }
     }
     onChange();
-  }, [audioData, cdgData, trackName]);
+  }, [onTrackAdded, audioData, cdgData, trackName]);
 
   const onFilesUploaded = async (e) => {
     const { files } = e.target;

@@ -9,6 +9,12 @@ export default class Storage {
     });
   }
 
+  async initialize() {
+    // Opening an IndexedDB connection can take several seconds. Dexie
+    // will do it lazily if we didn't do it here.
+    await this.db.open();
+  }
+
   async addTrackToLibrary(track) {
     const { digest } = track;
     console.log(`Track digest: ${digest}`);

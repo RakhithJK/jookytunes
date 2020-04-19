@@ -37,6 +37,7 @@ class Controller {
       this.queue = queue;
       this.publishStateChange();
     };
+    this.storage.initialize();
   }
 
   publishStateChange() {
