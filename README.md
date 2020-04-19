@@ -1,4 +1,4 @@
-# Jooktunes
+# JookyTunes
 
 A nice little standalone karaoke player based on React and Electron.
 
