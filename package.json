@@ -8,6 +8,7 @@
     "@openfonts/concert-one_latin": "^1.44.1",
     "@openfonts/overlock_latin": "^1.44.1",
     "@openfonts/rammetto-one_latin": "^1.44.1",
+    "@openfonts/roboto_all": "^1.44.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",

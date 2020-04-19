@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Track from "../lib/Track";
-import { addTrack } from "./PlayerContext";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
 function readFileAsync(file) {
@@ -40,19 +39,17 @@ function TrackUploader({ onTrackAdded = () => {} }) {
       if (audioData && cdgData && trackName) {
         const { title, artist } = guessTitleAndArtist(trackName) || {};
         setInProgress(true);
-        await addTrack(
-          await Track.fromData(
-            title || trackName,
-            artist || "Unknown",
-            audioData.buffer,
-            cdgData
-          )
+        const track = await Track.fromData(
+          title || trackName,
+          artist || "Unknown",
+          audioData.buffer,
+          cdgData
         );
         setInProgress(false);
         setTrackName("");
         setAudioData(null);
         setCdgData(null);
-        onTrackAdded();
+        onTrackAdded(track);
       }
     }
     onChange();

@@ -1283,6 +1283,11 @@
   resolved "https://registry.yarnpkg.com/@openfonts/rammetto-one_latin/-/rammetto-one_latin-1.44.1.tgz#ed9d67f1a15b024ac09d19982af5c6e0ddfb828f"
   integrity sha512-4pTFrtMHJjRj6QC/fonc1Orje5SoDh1Uhx/vjrRxAZ+0I/sXKwkTKh94FttbEcZDzXdpc8FKM28r0wfI87d7Eg==
 
+"@openfonts/roboto_all@^1.44.1":
+  version "1.44.1"
+  resolved "https://registry.yarnpkg.com/@openfonts/roboto_all/-/roboto_all-1.44.1.tgz#426ac935ebcfb2b16898ed44ff3140eb9396e89d"
+  integrity sha512-umsCiLle25RqxRzarTy0y6ovAabgGM9p8/dOxy/iwvlIZa/oBluH2gvyyrgS6o3kmb/dHroznJbWzH1xj/n0UQ==
+
 "@popperjs/core@^2.0.0":
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.3.3.tgz#8731722aeb7330e8fd9eb5d424be6b98dea7d6da"

@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import TrackUploader from "./TrackUploader";
+import LibraryBrowser from "./LibraryBrowser";
 import { makeStyles } from "@material-ui/core/styles";
 import Fab from "@material-ui/core/Fab";
-import Modal from "@material-ui/core/Modal";
-import Grid from "@material-ui/core/Grid";
+import { Dialog, DialogContent } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
+import { addTrack } from "./PlayerContext";
+
+import "./AddTrackButton.scss";
 
 const useStyles = makeStyles((theme) => ({
   extendedIcon: {
@@ -12,10 +15,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddTrackButton = ({ onTrackAdded, buttonClass }) => {
+const AddTrackButton = ({ onTrackAdded = () => {}, buttonClass }) => {
   const styles = useStyles();
-
   const [showModal, setShowModal] = useState(false);
+  const onTrackSelected = (t) => {
+    setShowModal(false);
+    addTrack(t);
+    onTrackAdded(t);
+  };
+
   return (
     <>
       <Fab
@@ -27,36 +35,31 @@ const AddTrackButton = ({ onTrackAdded, buttonClass }) => {
         <AddIcon className={styles.extendedIcon} />
         Add Tracks
       </Fab>
-
-      <Modal
+      <Dialog
         open={showModal}
+        maxWidth="md"
+        fullWidth={true}
         onClose={() => setShowModal(false)}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-        onBackdropClick={() => setShowModal(false)}
       >
-        <div>
-          <Grid
-            container
-            spacing={0}
-            alignItems="center"
-            justify="center"
-            style={{ minHeight: "100vh" }}
-          >
-            <div
-              style={{
-                backgroundColor: "#000",
-                minHeight: "20vh",
-                minWidth: "30vw",
-                border: "1px solid purple",
-                padding: "5rem",
-              }}
-            >
-              <TrackUploader onTrackAdded={() => setShowModal(false)} />
+        <DialogContent>
+          <div className="track-modal">
+            <div className="library">
+              <h5>Browse Library</h5>
+              <LibraryBrowser
+                className="browser"
+                onTrackSelected={onTrackSelected}
+              />
             </div>
-          </Grid>
-        </div>
-      </Modal>
+            <div className="uploader">
+              <h5>Add New</h5>
+              <TrackUploader
+                className="uploader"
+                onTrackAdded={onTrackSelected}
+              />
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

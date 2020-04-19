@@ -39,7 +39,7 @@ export default class Storage {
   }
 
   async iterAllTracks(cb) {
-    this.db.tracks.orderBy("title").each((trackRow) => {
+    await this.db.tracks.orderBy("title").each((trackRow) => {
       const track = Track.fromSerialized(
         trackRow.title,
         trackRow.artist,
@@ -49,4 +49,9 @@ export default class Storage {
       cb(track);
     });
   }
-}
+
+  async loadAllTracks() {
+    const result = [];
+    await this.iterAllTracks(result.push.bind(result))
+    return result;
+  }}

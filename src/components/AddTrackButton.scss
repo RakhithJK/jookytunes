@@ -1,0 +1,13 @@
+.track-modal {
+  display: flex;
+  .library {
+    flex-grow: 1;
+    margin-right: 1rem;
+    .browser {
+      max-height: 50vh;
+      overflow: scroll;
+    }
+  }
+  .uploader {
+  }
+}

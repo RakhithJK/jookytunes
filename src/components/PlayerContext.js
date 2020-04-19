@@ -15,7 +15,6 @@ export const PlayerContextProvider = function ({ children }) {
   const [queue, setQueue] = useState([]);
 
   CONTROLLER.onStateChange = (controllerState) => {
-    console.log('got state', controllerState);
     setIsPlaying(controllerState.isPlaying);
     setCurrentTrack(controllerState.currentTrack);
     setQueue([...controllerState.queue]);
@@ -31,6 +30,7 @@ export const PlayerContextProvider = function ({ children }) {
         play,
         stop,
         advance,
+        storage: CONTROLLER.storage,
       }}
     >
       {children}
