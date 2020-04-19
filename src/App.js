@@ -1,12 +1,10 @@
-import React from "react";
-import Player from "./components/Player";
-import { PlayerContextProvider } from "./components/PlayerContext";
-import QueueStatus from "./components/QueueStatus";
-import AddTrackButton from "./components/AddTrackButton";
 import { createMuiTheme } from "@material-ui/core";
 import { ThemeProvider } from "@material-ui/styles";
-
+import React from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./App.scss";
+import { PlayerContextProvider } from "./components/PlayerContext";
+import MainView from "./views/MainView";
 
 const theme = createMuiTheme({
   palette: {
@@ -18,13 +16,13 @@ function App() {
   return (
     <PlayerContextProvider>
       <ThemeProvider theme={theme}>
-        <div className="main-container">
-          <div className="main-window">
-            <Player className="player" />
-          </div>
-          <QueueStatus className="queue" />
-          <AddTrackButton buttonClass="action-button" />
-        </div>
+        <Router>
+          <Switch>
+            <Route exact path="/">
+              <MainView />
+            </Route>
+          </Switch>
+        </Router>
       </ThemeProvider>
     </PlayerContextProvider>
   );

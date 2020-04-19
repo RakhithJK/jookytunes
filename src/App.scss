@@ -5,33 +5,3 @@ body {
   color: #fff;
   background-color: #000;
 }
-
-.main-container {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-
-  .main-window {
-    flex-grow: 1;
-    height: 90vh;
-    .player {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  }
-  .queue {
-    height: 10vh;
-    max-height: 20vh;
-  }
-  .action-button {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 1rem;
-  }
-}
-
-.add-button {
-  margin-left: 1em;
-}
