@@ -19,9 +19,16 @@ const AddTrackButton = ({ onTrackAdded = () => {}, buttonClass }) => {
   const { controller } = useContext(PlayerContext);
   const styles = useStyles();
   const [showModal, setShowModal] = useState(false);
-  const onTrackSelected = (t) => {
+
+  const onExistingTrackSelected = (t) => {
     setShowModal(false);
-    controller.addTrack(t);
+    controller.addTrack(t, false);
+    onTrackAdded(t);
+  };
+
+  const onNewTrackUploaded = (t) => {
+    setShowModal(false);
+    controller.addTrack(t, true);
     onTrackAdded(t);
   };
 
@@ -48,14 +55,14 @@ const AddTrackButton = ({ onTrackAdded = () => {}, buttonClass }) => {
               <h5>Browse Library</h5>
               <LibraryBrowser
                 className="browser"
-                onTrackSelected={onTrackSelected}
+                onTrackSelected={onExistingTrackSelected}
               />
             </div>
             <div className="uploader">
               <h5>Add New</h5>
               <TrackUploader
                 className="uploader"
-                onTrackAdded={onTrackSelected}
+                onTrackAdded={onNewTrackUploaded}
               />
             </div>
           </div>

@@ -1,22 +1,28 @@
-import { encode as b64encode, decode as b64decode } from "base64-arraybuffer";
-
 export default class Track {
-  constructor({ title, artist, audioData, cdgData, digest }) {
-    this.title = title;
-    this.artist = artist;
-    this.audioData = audioData;
-    this.cdgData = cdgData;
+  constructor({ title, artist, digest, audioData, cdgData }) {
     if (!digest) {
       throw new Error("Must have digest!");
     }
     this.digest = digest;
+    this.title = title;
+    this.artist = artist;
+    this.audioData = audioData;
+    this.cdgData = cdgData;
   }
 
-  serializeData() {
-    return JSON.stringify({
-      audioData: b64encode(this.audioData),
-      cdgData: b64encode(this.cdgData),
-    });
+  getCachedData() {
+    if (this.audioData && this.cdgData) {
+      return {
+        audioData: this.audioData,
+        cdgData: this.cdgData,
+      };
+    }
+    return null;
+  }
+
+  clearCachedData() {
+    this.cdgData = null;
+    this.audioData = null;
   }
 
   static async getDigest(audioData, cdgData) {
@@ -27,13 +33,6 @@ export default class Track {
       .map((b) => b.toString(16).padStart(2, "0"))
       .join("");
     return digestHex;
-  }
-
-  static fromSerialized(title, artist, digest, jsonData) {
-    const parsed = JSON.parse(jsonData);
-    const audioData = new Uint8Array(b64decode(parsed.audioData));
-    const cdgData = new Uint8Array(b64decode(parsed.cdgData));
-    return new Track({ title, artist, audioData, cdgData, digest });
   }
 
   static async fromData(title, artist, rawAudioData, rawCdgData) {

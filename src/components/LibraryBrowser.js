@@ -25,7 +25,7 @@ function LibraryBrowser({ onTrackSelected = () => {}, ...props }) {
     async function loadTracks() {
       setIsLoading(true);
       try {
-        const tracks = await storage.loadAllTracks();
+        const tracks = await storage.listAllTracks();
         setAllTracks(tracks);
       } finally {
         setIsLoading(false);

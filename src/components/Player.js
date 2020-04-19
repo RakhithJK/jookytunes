@@ -29,6 +29,11 @@ function Player() {
   const [backgroundStyle, setBackgroundStyle] = useState("#000");
   const { controller, currentTrack: track } = useContext(PlayerContext);
 
+  const onBackgroundChange = ([r, g, b]) => {
+    const newBackgroundStyle = `rgba(${r}, ${g}, ${b}, 1.0)`;
+    setBackgroundStyle(newBackgroundStyle);
+  };
+
   useEffect(() => {
     function handleResize() {
       setWindowAspectRatio(window.innerWidth / window.innerHeight);
@@ -39,36 +44,6 @@ function Player() {
     window.addEventListener("resize", handleResize);
     return cleanupListener;
   }, []);
-
-  // Create an audiocontext once we load.
-  useEffect(() => {
-    function onSetup() {
-      if (!track) {
-        return;
-      }
-      console.log("Creating audio player...");
-      const ctx = new AudioContext();
-      ctx.decodeAudioData(track.audioData.buffer, (audioData) => {
-        const source = ctx.createBufferSource();
-        source.buffer = audioData;
-        source.connect(ctx.destination);
-        setAudioSource(source);
-        source.onended = function () {
-          controller.advance();
-        };
-      });
-    }
-    function cleanup() {
-      console.log("TODO: Clean up audio context");
-    }
-    onSetup();
-    return cleanup;
-  }, [controller, track]);
-
-  const onBackgroundChange = ([r, g, b]) => {
-    const newBackgroundStyle = `rgba(${r}, ${g}, ${b}, 1.0)`;
-    setBackgroundStyle(newBackgroundStyle);
-  };
 
   // Create a CDGPlayer once we have a canvas.
   useEffect(() => {
@@ -87,19 +62,46 @@ function Player() {
     onSetup();
   }, [currentCanvas]);
 
-  // Bootstrap the CDGPlayer with data once we have it.
+  // Play the audio and graphics once available.
   useEffect(() => {
-    function onSetup() {
+    async function onSetup() {
       if (!track || !cdgPlayer) {
         return;
       }
-      cdgPlayer.load(track.cdgData);
+ 
+      console.log("Loading track data...");
+      const { audioData, cdgData } = await controller.loadTrackData(track);
+
+      console.log("Creating audio player...");
+      const ctx = new AudioContext();
+      ctx.decodeAudioData(audioData.buffer, (decodedBuffer) => {
+        const source = ctx.createBufferSource();
+        source.buffer = decodedBuffer;
+        source.connect(ctx.destination);
+        setAudioSource(source);
+        source.onended = function () {
+          controller.advance();
+        };
+        source.addEventListener('timeupdate', function () {
+          console.log('sync update')
+          cdgPlayer.sync(source.currentTime * 1000) // convert to ms
+        })
+      });
+
+      console.log("Creating CDG player...");
+      cdgPlayer.load(cdgData);
+
+      console.log("Launching players ...");
       setIsPlaying(true);
     }
+    function cleanup() {
+      console.log("TODO: Clean up audio context");
+    }
     onSetup();
-  }, [track, cdgPlayer]);
+    return cleanup;
+  }, [controller, track, cdgPlayer]);
 
-  // Bootstrap the audio player with data once we have it.
+  // Play the players once we have it.
   useEffect(() => {
     function onSetup() {
       if (!cdgPlayer || !audioSource) {

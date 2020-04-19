@@ -49,9 +49,20 @@ class Controller {
     this.onStateChange(newState);
   }
 
-  async addTrack(t) {
-    await this.storage.addTrackToLibrary(t);
-    this.playlist.addTrack(t)  
+  async addTrack(t, addToStorage = true) {
+    if (addToStorage) {
+      await this.storage.addTrackToLibrary(t);
+    }
+    this.playlist.addTrack(t);
+  }
+
+  async loadTrackData(track) {
+    const cachedData = track.getCachedData();
+    if (cachedData) {
+      return cachedData;
+    }
+    const trackData = await this.storage.loadTrackData(track.digest);
+    return trackData;
   }
 
   play() {

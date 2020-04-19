@@ -1,11 +1,13 @@
 import Dexie from "dexie";
 import Track from "./Track";
+import { encode as b64encode, decode as b64decode } from "base64-arraybuffer";
 
 export default class Storage {
   constructor() {
     this.db = new Dexie("TrackLibrary");
     this.db.version(1).stores({
-      tracks: "&digest,artist,title,data",
+      tracks: "&digest,artist,title",
+      trackdata: "&digest,data",
     });
   }
 
@@ -19,18 +21,30 @@ export default class Storage {
     const { digest } = track;
     console.log(`Track digest: ${digest}`);
 
-    await this.db.transaction('rw?', this.db.tracks, async () => {
+    const cachedData = track.getCachedData();
+    if (!cachedData) {
+      throw new Error('Track has no data.');
+    }
+
+    await this.db.transaction('rw?', [this.db.tracks, this.db.trackdata], async () => {
       const numExisting = await this.db.tracks
         .where("digest")
         .equals(digest)
         .count();
       if (!numExisting) {
         console.log("Track not in library, adding");
+        const { audioData, cdgData } = cachedData;
         await this.db.tracks.add({
           digest: digest,
           artist: track.artist,
           title: track.title,
-          data: track.serializeData(),
+        });
+        await this.db.trackdata.add({
+          digest: digest,
+          data: JSON.stringify({
+            audioData: b64encode(audioData),
+            cdgData: b64encode(cdgData),
+          }),
         });
       } else {
         console.log("Track is in library!");
@@ -40,18 +54,31 @@ export default class Storage {
 
   async iterAllTracks(cb) {
     await this.db.tracks.orderBy("title").each((trackRow) => {
-      const track = Track.fromSerialized(
-        trackRow.title,
-        trackRow.artist,
-        trackRow.digest,
-        trackRow.data
-      );
+      const { title, artist, digest } = trackRow;
+      const track = new Track({ title, artist, digest, loader: this.loaderCb });
       cb(track);
     });
   }
 
-  async loadAllTracks() {
+  async listAllTracks() {
     const result = [];
-    await this.iterAllTracks(result.push.bind(result))
+    await this.iterAllTracks(result.push.bind(result));
     return result;
-  }}
+  }
+
+  async loadTrackData(digest) {
+    try {
+      const record = await this.db.trackdata.get({ digest: digest });
+      const parsed = JSON.parse(record.data);
+      const audioData = new Uint8Array(b64decode(parsed.audioData));
+      const cdgData = new Uint8Array(b64decode(parsed.cdgData));
+      return {
+        audioData,
+        cdgData,
+      };
+    } catch (e) {
+      return { audioData: null, cdgData: null };
+    }
+  }
+
+}
