@@ -1,4 +1,4 @@
-import React, {  useEffect, useState, useContext, useRef } from "react";
+import React, {  useEffect, useState, useContext } from "react";
 import CDGPlayer from "cdgraphics";
 import PlayerContext, { advance } from "./PlayerContext";
 import SplashScreen from './SplashScreen';
@@ -69,7 +69,7 @@ function Player() {
         return;
       }
       console.log("Creating CDG player...");
-      setCdgPlayer(new CDGPlayer(currentCanvas, { forceTransparent: false }));
+      setCdgPlayer(new CDGPlayer(currentCanvas, { forceTransparent: false, scale: 2 }));
     }
     onSetup();
   }, [currentCanvas]);
